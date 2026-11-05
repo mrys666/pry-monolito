@@ -23,10 +23,10 @@ new #[Layout('layouts.app')] class extends Component {
 };
 ?>
 
-<div class="max-w-7xl mx-auto py-8 space-y-8">
+<div class="">
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <flux:heading size="xl">Panel de Control</flux:heading>
+            <flux:heading size="xl">Panel de Control asdfsd</flux:heading>
             <flux:text class="text-gray-500">Resumen operativo de tu organización.</flux:text>
         </div>
         <flux:button href="{{ route('reports.index') }}" variant="primary" icon="chart-bar" wire:navigate>

@@ -29,7 +29,9 @@ test('security settings page renders without two factor when feature is disabled
         ->assertDontSee('Two-factor authentication');
 });
 
-test('two factor authentication disabled when confirmation abandoned between requests', function () {});
+test('two factor authentication disabled when confirmation abandoned between requests', function () {
+    $this->markTestSkipped('La autenticación de dos factores todavía no está habilitada en esta aplicación.');
+});
 
 test('password can be updated', function () {
     $user = User::factory()->create([

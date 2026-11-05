@@ -42,6 +42,8 @@ class InventoryMovementRegistered implements ShouldBroadcast, ShouldDispatchAfte
 
     /**
      * Enviamos solo datos escalares ligeros por el WebSocket, evitando exponer modelos completos.
+     *
+     * @return array{movement_id: int, product_id: int, type: string, quantity: int, stock_after: int}
      */
     public function broadcastWith(): array
     {

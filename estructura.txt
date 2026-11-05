@@ -18,6 +18,7 @@ D:.
 |   phpstan.neon
 |   phpunit.xml
 |   pint.json
+|   README.md
 |   vite.config.js
 |   
 +---.agents
@@ -117,13 +118,21 @@ D:.
 |   |   |   |       UserRole.php
 |   |   |   |       
 |   |   |   \---Policies
+|   |   |           CategoryPolicy.php
 |   |   |           InventoryMovementPolicy.php
 |   |   |           ProductPolicy.php
 |   |   |           
 |   |   +---Catalog
 |   |   |   +---Actions
+|   |   |   |       CreateCategoryAction.php
 |   |   |   |       CreateProductAction.php
+|   |   |   |       DeleteCategoryAction.php
+|   |   |   |       ToggleCategoryStatusAction.php
 |   |   |   |       ToggleProductStatusAction.php
+|   |   |   |       UpdateCategoryAction.php
+|   |   |   |       
+|   |   |   +---Exceptions
+|   |   |   |       CategoryHasProductsException.php
 |   |   |   |       
 |   |   |   \---Models
 |   |   |           Category.php
@@ -226,6 +235,7 @@ D:.
 |   |   database.sqlite
 |   |   
 |   +---factories
+|   |       CategoryFactory.php
 |   |       OrganizationFactory.php
 |   |       UserFactory.php
 |   |       
@@ -240,6 +250,7 @@ D:.
 |   |       2026_10_26_003730_add_role_to_users_table.php
 |   |       2026_10_26_022947_create_organizations_and_add_tenant_columns.php
 |   |       2026_10_27_172806_add_corporate_details_to_organizations_table.php
+|   |       2026_10_27_190148_add_unique_name_to_categories_per_organization.php
 |   |       
 |   \---seeders
 |           DatabaseSeeder.php
@@ -7502,7 +7513,10 @@ D:.
 |       |   |       reset-password.blade.php
 |       |   |       
 |       |   +---catalog
+|       |   |       ?categories.blade.php
+|       |   |       ?create-category.blade.php
 |       |   |       ?create-product.blade.php
+|       |   |       ?edit-category.blade.php
 |       |   |       ?index.blade.php
 |       |   |       
 |       |   +---inventory
@@ -7545,300 +7559,122 @@ D:.
 |   |           
 |   +---blaze
 |   |   \---traces
-|   |           01M5YVQQKQZHHARTFKTG02MSDY.json
-|   |           01M5YVXZCDA58H9KYX1JWJ9BMP.json
-|   |           01M5YVZ08TY6WJSYKJR5APNEB7.json
-|   |           01M5YVZ6ZDXK273DFNK30Z7S9V.json
-|   |           01M5YVZBGJ84JWPMAY1DNWGGZE.json
-|   |           01M5YVZEPX9H21WX45BW44VC8J.json
-|   |           01M5YVZHN05NGATJ4DF2QAJJGB.json
-|   |           01M5YVZKXJ6WX2QPXRNP89RF89.json
-|   |           01M5YW065NDERK65GY31AGDTNQ.json
-|   |           01M5YW0C0QNMQAA019QDDBGBMC.json
-|   |           01M5YW1S9033QKYPPDBMG0RHBR.json
-|   |           01M5YW3G1PZT5MB0CG40Q6FN48.json
-|   |           01M5YW3T1ZVRBB2A4868ZR9CQZ.json
-|   |           01M5YW4A3YZMYQ336QW26ZSHJM.json
-|   |           01M5YW4YN3KB7VQJT058FGNT8M.json
-|   |           01M5YW4ZRZWZ1XQTX9TQMDSYBK.json
-|   |           01M5YW51Q1PFA3JDPZX68K2602.json
-|   |           01M5YW53EPMGSMQXZ3VZJYB2HQ.json
-|   |           01M5YW54T5FB0D8F6QVMQAQ5Q0.json
-|   |           01M5YW55S8P0WHG29HDQJFFF7X.json
-|   |           01M5YW570GJFVSQW4Y95PB19ME.json
-|   |           01M5YW588HP3VCJA86E65Y182J.json
-|   |           01M5YW5EPANZK81QZ5P1XRVE9F.json
-|   |           01M5YW5HFVZNBJ3PQSXFB7CDP3.json
-|   |           01M5YW5PD774NPAZP48S37HYFQ.json
-|   |           01M5YW98GJQ3868S7YCE1ZXZW0.json
-|   |           01M5YW9KG1NFH20PB9K88999DE.json
-|   |           01M5YWCXW1XX9YZ8ZY5V95Z7NQ.json
-|   |           01M5YWE3TDBWX35BM3QR86FHV5.json
-|   |           01M5YWEMKJD1AZAE1RVRX8J8YJ.json
-|   |           01M5YWET404Y22125M26EG4RKJ.json
-|   |           01M5YWEXZH7ZAH2XR6TW0BQTYV.json
-|   |           01M5YWF615RER82QXT4H23VF74.json
-|   |           01M5YWFEG1QAGAWRFQCZZ5RMZB.json
-|   |           01M5YWFNRP93ARS2514K0DV8Q0.json
-|   |           01M5YWFZ4WWX6DR9DT0APSXQ98.json
-|   |           01M5YWHJ5KPC1010K3QJ0X7NNR.json
-|   |           01M5YWHSK46ENANM97TEV9QHVA.json
-|   |           01M5YWK6JYA86DSEG0MS5RS8GG.json
-|   |           01M5YWKJK55FMF2T9MDAZZEN1B.json
-|   |           01M5YWKNDF1NF45XFMAGFQ6C92.json
-|   |           01M5YWKVVZMDD0SJYW7KRHBNJC.json
-|   |           01M5YWKYMX6VG3Y1C9D6MXHF58.json
-|   |           01M5YWMA1PX5A8CEY7DQD310WW.json
-|   |           01M5YWMSP51V3025EDX5K1HHEF.json
-|   |           01M5YWMTQFBV0SHPQYTR7SZVWY.json
-|   |           01M5YWN5FCC3QXXY3KDXZZE0XS.json
-|   |           01M5YWNDG8KB4V59VK7H004ZTP.json
-|   |           01M5YWNF1BXK2ATY2S5G3G2643.json
-|   |           01M5YWNJKRSMRPHASDAF90VHM8.json
-|   |           01M5YWNVEKRWYE54HWWX3Y3A85.json
-|   |           01M5YWPN6QYQ4A04HRB52VNCC6.json
-|   |           01M5YWPSW248N20J186JV8AAKN.json
-|   |           01M5YWQ2STY6REXQKFJQ7H3PVR.json
-|   |           01M5YWQ9KTWGHY66GHQ9EE3Z4Y.json
-|   |           01M5YWQGYKA7NRAK93JA80N071.json
-|   |           01M5YZ0XKS3DGCBS7WZPJS4AQ9.json
-|   |           01M5YZ23WDTM5YWZXG4P7PSJC0.json
-|   |           01M5YZ2BGAAJK73K6RTGXDMG8C.json
-|   |           01M5YZ364HAX3K769WTGJWEJ13.json
-|   |           01M5YZ381K2MSWBX774YGV5YH0.json
-|   |           01M5YZ3F1NVMRY2RRZ66DF9X55.json
-|   |           01M5YZ3M5EBM2HP9C76NKF2V56.json
-|   |           01M5YZ3N84ZJ68WPZQAZ4AE9PX.json
-|   |           01M5YZ3PSEQPY1RV3MKTP87M6C.json
-|   |           01M5YZ3QMW6983JA275KYHAANE.json
-|   |           01M5YZ3YF7ZG37QHSP0VS5EV4B.json
-|   |           01M5YZ4Z18M0H2CNAV3NMF5S5J.json
-|   |           01M5YZ51AJYKY2QBZHJEH3CM2K.json
-|   |           01M5YZ55317SKDDRBJC1EQWZ2P.json
-|   |           01M5YZ59D4EMJHDYQXKTAPYVJ6.json
-|   |           01M5YZ5CYJ0CMYC4N1WG8VV8QJ.json
-|   |           01M5YZ6JY00W2TZH4EAW87JP1W.json
-|   |           01M5YZ6MPDFPXGSCN1SWAA9K2G.json
-|   |           01M5YZ6RACJY8Y147N0Y1B96VR.json
-|   |           01M5YZ6VJ492WW0ZXP0PW2KK56.json
-|   |           01M5YZ6WTM98Z4B12QV89TZ72T.json
-|   |           01M5Z05DHSQGW34FAD35P2WR61.json
-|   |           01M5Z05EKRE0Y06NCYMHZW0P5N.json
-|   |           01M5Z0DSAWWP18PDAQM1JYT3HE.json
-|   |           01M5Z0DSK6T3MD57KQZWYF2X3C.json
-|   |           01M5Z0G1DCFHR33Q3SDGCSYR64.json
-|   |           01M5Z0G8AV135PDK3Y1DJEGVJ6.json
-|   |           01M5Z0G9B095BWFJDP87WFS1C5.json
-|   |           01M5Z0GAXY15NSGKRWFTDKNTMY.json
-|   |           01M5Z0HC18PKJ0PYAJGVYSDMS1.json
-|   |           01M5Z0HMKV1PDZC68F9VVAD3EK.json
-|   |           01M5Z0J8AYPR9CZJY10G44N2HB.json
-|   |           01M5Z0M37A1Q7DMTTPP8M9EZY4.json
-|   |           01M5Z0M3PBNWG0VQAS30SJVNHA.json
-|   |           01M5Z0M57GWGPW3YVQA9J7RY79.json
-|   |           01M5Z0WFK2PJ877M9NB0M95A9R.json
-|   |           01M5Z0WKR8HDSM2PA1HJ53PZTA.json
-|   |           01M5Z0XBFRWPQY6YN87VBXTFGZ.json
-|   |           01M5Z0XJAQ89KGGKGHKEH2KE97.json
-|   |           01M5Z0YGXVZHVBNG10EX5TZ2GX.json
-|   |           01M5Z0YN7D4KN9PJ72JNJ9HZPX.json
-|   |           01M5Z0ZF6K60Z3PNN8QW82TGMS.json
-|   |           01M5Z0ZFQ8WYSVZJ98G2601T6T.json
-|   |           01M5Z10QA435DHF49YSDK8FRV5.json
-|   |           01M5Z10QNY2EA92YDTJTYT8N3B.json
-|   |           01M5Z111G20ZZRCCHG9BDYTGM2.json
-|   |           01M5Z114213Z9RJMRVK2VPJPEA.json
-|   |           01M5Z11QR9W349K4WVRSGF52YZ.json
-|   |           01M5Z11T3N6RTJW9CAV7F6XBQV.json
-|   |           01M5Z12G4PVGZY3D45V32MT4KM.json
-|   |           01M5Z12WHVFK20XH99XBQDSXW6.json
-|   |           01M5Z12XHMJ1NZT6C46S0KKDZF.json
-|   |           01M5Z13BTDFJZKANQ2KTWD92TW.json
-|   |           01M5Z13EH4K4Q4B1R0HYQJEYMR.json
-|   |           01M5Z13R8JX1EWJBETCCYS8FDZ.json
-|   |           01M5Z13TQFY7YZCMV77EV4XGHV.json
-|   |           01M5Z14Q3GJQFGASFT3NF67WJJ.json
-|   |           01M5Z14QAEN81KJCA2BWNC0VSC.json
-|   |           01M5Z14TEK7J0P4RC5Z05MPGJC.json
-|   |           01M5Z14VCYX3CH6XFH2KJDMYKQ.json
-|   |           01M5Z152RMBSSK2YTZ652H47QH.json
-|   |           01M5Z156VE32AKPKZ50M7KNTP7.json
-|   |           01M5Z15DR9EPRRMT58EDA7K511.json
-|   |           01M5Z15H6YJW89HACHVCC0W707.json
-|   |           01M5Z15KCZRSKEZP4MZ13EGTC0.json
-|   |           01M5Z15P5T5FNZN1YGXMQ24W98.json
-|   |           01M5Z17BKADE4BQQZ43SCGE2X9.json
-|   |           01M5Z17BSKA2PZ3GR1E1AM5ZEC.json
-|   |           01M5Z18K078MSPSCWDF1BRN37B.json
-|   |           01M5Z18NM9H3BFR0GRN5N7CMDR.json
-|   |           01M5Z191E2PTQQPYZ2EZ86Z37E.json
-|   |           01M5Z192BE159V82Y500P43PQ0.json
-|   |           01M5Z195MDJ82JNTA2QHFC1F9H.json
-|   |           01M5Z199K1VZE2HY4M1EAH4EJ0.json
-|   |           01M5Z19ARYWYQWBMQVGJ1DEQQS.json
-|   |           01M5Z1AFFYDMRKG7E10VBNSW2M.json
-|   |           01M5Z1B4YNBNBVW0ZMGJG9KCPC.json
-|   |           01M5Z1BPNVC99HKJ8CDMED700Z.json
-|   |           01M5Z1BT7VW9EP0PR209E7ATK2.json
-|   |           01M5Z1BY9N8ARN0JVVVV2BPX2P.json
-|   |           01M5Z1C0JFZTX2HYNCD686AVV3.json
-|   |           01M5Z1C9SPGJJWCA7CYR8MFS5Q.json
-|   |           01M5Z1FR9ZXEM7CHW03M8HZC0P.json
-|   |           01M5Z1FRR1TFSFFH7P6RF1XDGY.json
-|   |           01M5Z1G5B0PD113V6KQMD5HSJY.json
-|   |           01M5Z1GFSEX3QWN967K0AQCFVG.json
-|   |           01M5Z1GK957024FQFQADEH3D6P.json
-|   |           01M5Z1GQH0RND7FG7Z2RG1TPPS.json
-|   |           01M5Z1HXRHZXK5H2NPWY5NDDTN.json
-|   |           01M5Z1JX8F3TT45G6EZ721E2DT.json
-|   |           01M5Z1K0W5G0QEYZ7CV3E6MPN0.json
-|   |           01M5Z1K23GNA8RW2TT6SK79S2D.json
-|   |           01M5Z1KHAVEQD3CRW49ZDW7VJM.json
-|   |           01M5Z1KRT5WESATYV54EHPXV8M.json
-|   |           01M5Z1M2NZJFESXC97KDCM42HJ.json
-|   |           01M5Z1MB49BTNFT5AB6N5TT86Q.json
-|   |           01M5Z1MG5BN530JZ979KPP3DW9.json
-|   |           01M5Z1MJ1RTCVBV2ZN252SEGNK.json
-|   |           01M5Z1MMY8J22MCEWWEDAGGHV7.json
-|   |           01M5Z1N29JBZMW9JZ5A4016E65.json
-|   |           01M5Z1N47CT2K8Y794VJF815EN.json
-|   |           01M5Z1N8N8ESHVPP14ABEEFPZK.json
-|   |           01M5Z1NFTSM2AV31K9M18JKXV8.json
-|   |           01M5Z1P7S4N6QPWF1CV02BZQ9H.json
-|   |           01M5Z1PEB7RYPHAKZAH6PDF59Z.json
-|   |           01M5Z1PQ9MD907W8ER1CS1Z9B1.json
-|   |           01M5Z1Q0GSZT9R6NZN1JNFF06M.json
-|   |           01M5Z1Q7FC5SVEHQDHXH6ZMR6Q.json
-|   |           01M5Z1QMP11HGTTCNPW3PEKD8C.json
-|   |           01M5Z1R1HM76BARFAXX977HHSA.json
-|   |           01M5Z1R2MDK8K07QKAP8TX5V59.json
-|   |           01M5Z1R3AQCAVG2MA8ZNQVGR5Q.json
-|   |           01M5Z1R3QF77JA2AS6C5B2G1T1.json
-|   |           01M5Z1R6D17J8TN79YVS3VPQMH.json
-|   |           01M5Z1R6Z5J9TQTRZCH0TCX4ZN.json
-|   |           01M5Z1RF7Q4HKCKMCP2REPC5MQ.json
-|   |           01M5Z1RGFWXJZ5S36BJSDV2Q8N.json
-|   |           01M5Z1RQR4EQN60Q0C6QKWFDHG.json
-|   |           01M5Z1RTWBDWP4WRWNXX646CSZ.json
-|   |           01M5Z1SSWB7N21BG99W1142DV9.json
-|   |           01M5Z1SVBCQVGA8JD1RYE0RFTY.json
-|   |           01M5Z1SW220CAAPR7YYXF9RCFQ.json
-|   |           01M5Z1SWCP9EAEM3EYSVX1211R.json
-|   |           01M5Z1SWTXWC230NMVYXGWYXQX.json
-|   |           01M5Z1SY5HJESFSE15F6W4YX0H.json
-|   |           01M5Z3FRR8R2JWC7X289R5TRDJ.json
-|   |           01M5Z3FVA3H46W81KNPX0QJ37P.json
-|   |           01M5Z3FVXBASBAAGSFRVJ2MZRZ.json
-|   |           01M5Z3FXGQW8CH1A1A7AY28N0Y.json
-|   |           01M5Z3G0FEBZ45GQYDPS12P70A.json
-|   |           01M5Z3G21T2B3HJ7ZKRJ66BAXY.json
-|   |           01M5Z3G7B5Y0EXRCMR1GWPAV1C.json
-|   |           01M5Z5039WVMHD12PHQA7BAWJ4.json
-|   |           01M5Z54VQVNK7F52D5N78884G9.json
-|   |           01M5Z54Z2JQC6WES53RWNGR8ZY.json
-|   |           01M5Z559X15Z3C5Y49HWVENMYS.json
-|   |           01M5Z55D7SCARYNM1Z39P2G7A2.json
-|   |           01M5Z55J3MFRZFGXS681SN9JYN.json
-|   |           01M5Z55KZKKVDTPBZJPXR93KDA.json
-|   |           01M5Z55VSR6MQ0QA0ZEDFGK03D.json
-|   |           01M5Z564H5H0334GTW489ET29H.json
-|   |           01M5Z56AD4D1SHR7JWJ3FNEAC0.json
-|   |           01M5Z5AE9BRF337K4HWS1Z331V.json
-|   |           01M5Z5AFS0S3RKCCN0409EQN4F.json
-|   |           01M5Z5AJ6XS102KAR0G26W0MWN.json
-|   |           01M5Z5AK3RYDEVTB30WMMN95JZ.json
-|   |           01M5Z5G4Y4CW9ZCTG59SXPX0F2.json
-|   |           01M5Z5G5340C1GYATHS6AKG5SK.json
-|   |           01M5Z5G7F5BGDDT12EXQ89RESH.json
-|   |           01M5Z5G7RJWGXJPQBYTSBN1BG7.json
-|   |           01M5Z5GAVBQ3BD96J34CE30EK1.json
-|   |           01M5Z5GBP1T13H0M073N4FG27A.json
-|   |           01M5Z5N82ZZ11F461J2EQBHC43.json
-|   |           01M5Z5N8NB8VXZ0MVT6XV57WND.json
-|   |           01M5Z5NC1AJMN58CNS34Z436SR.json
-|   |           01M5Z5NCSVM9CKSTJ90AZ51TGA.json
-|   |           01M5Z5NJC92J2W9EKBH2BFMP5G.json
-|   |           01M5Z5NKYTCKK1SZ08NER1A2VS.json
-|   |           01M5Z5NNMSNHTD316MW65EDPGV.json
-|   |           01M5Z5NW049N6FFD79BWHGKMW8.json
-|   |           01M5Z5NWE7C28GQCQQ3W482CQG.json
-|   |           01M5Z6DDZFVP1B9DY4CEEGYZQ9.json
-|   |           01M5Z6DFC8HTMQV55BY6P5X17N.json
-|   |           01M5Z6DNDSZ5MFECEMGDT8Z2QA.json
-|   |           01M5Z8Q69Y47RGQJ6CW5KSBSD8.json
-|   |           01M5Z8Q6QJ2VWK7G43V6KMADJX.json
-|   |           01M5Z8QF2GQC61NCV94ETZ776T.json
-|   |           01M5Z8QFF53Z4FYJNA0GHTKV2M.json
-|   |           01M5Z8VMS7R4XSAMPW9QG09ZC0.json
-|   |           01M5Z8VNCE8DXARAYD7CHQRMVC.json
-|   |           01M5Z8X18RK11NHSWPSGEH7KYG.json
-|   |           01M5Z8X25VZ2A0A47S349XBHPW.json
-|   |           01M5Z8XQNRMETPGEVSD4BM9QKP.json
-|   |           01M5Z8XSYWJ2MF07FQB3XHNYWE.json
-|   |           01M5Z8Y4TWKEAQPVXNJKT0QD8C.json
-|   |           01M5Z8Y5KYM1GW3D1QFR72KT40.json
-|   |           01M5Z8YFSS55C6KWX6PY7HB3CN.json
-|   |           01M5Z8YGM16BD2SWM3504P07CA.json
-|   |           01M5Z8ZVF2R9PGDV4637M5KAMN.json
-|   |           01M5Z8ZWDAGDZA4NCT12961AB2.json
-|   |           01M5Z90RS78E2738P91HXHZFSN.json
-|   |           01M5Z90SDKPREYWHWWMRW7ZD53.json
-|   |           01M5Z928NC0C1BBWSZCEQGD4P8.json
-|   |           01M5Z92925S1H7V7ZTGN1MTFHT.json
-|   |           01M5Z92M3V8AHVFCKP694XMK1W.json
-|   |           01M5Z93FJ48ET5S57GHZSP7R4F.json
-|   |           01M5Z93JAVRPN17K23PD34NYHS.json
-|   |           01M5Z95T3NAW5MNG1FEQNP5GYK.json
-|   |           01M5Z95TDWEZJT0WCT1FBTKRSE.json
-|   |           01M5Z9692HB7G7T06053FRMJ4Z.json
-|   |           01M5Z969DHAPFKQYXGF8VMETFM.json
-|   |           01M5Z97E4KNQZRBC3ZSJ74TDX9.json
-|   |           01M5Z97EAFM9PED34FFYVZ35TT.json
-|   |           01M5Z98WFHMM9SVD5SFYFMKT52.json
-|   |           01M5Z98WSW11JH7C7782GRBHE9.json
-|   |           01M5Z993MZRMERY96P13SEGQRW.json
-|   |           01M5Z994Q5DB29FZ60KH60F5MD.json
-|   |           01M5Z99D38WYD15FAH31VCQYZD.json
-|   |           01M5Z99DTPV69BW3EM7D56NZ48.json
-|   |           01M5Z99RJHX16Q6XCF15JV96JR.json
-|   |           01M5Z9CPKM4Y4J6DEH26ZPTZNZ.json
-|   |           01M5Z9CQ7S8HER16Q5C6BDB47P.json
-|   |           01M5Z9CSMWEEQXQNVGRTJ9ZV12.json
-|   |           01M5Z9CV9Z2Z1F4MJWH0VP3DWF.json
-|   |           01M5Z9DCVJKKQX2WPKBEPQQQP2.json
-|   |           01M5Z9DDNVESVVN3SB7BW41GKG.json
-|   |           01M5Z9F1E1B0GE28MEK27NQ7H0.json
-|   |           01M5Z9F4ARB3R50BYC7Q6JTJDZ.json
-|   |           01M5Z9GMBJZ1SNK3RN0C0PF8ZD.json
-|   |           01M5Z9H42HGSVWNXPMF1XQKBWK.json
-|   |           01M5Z9H823X816TDWDDNQJTSRG.json
-|   |           01M5Z9KBZ5S58HTHTCW7P4CNS8.json
-|   |           01M5Z9KDKB2G54M2VAW34AFMVW.json
-|   |           01M5Z9KEBGCQKEE00NSXVFTPHY.json
-|   |           01M5Z9KMECPHYZHTGCYJSPJCV1.json
-|   |           01M5Z9RPAW3B85G9WHVJF2AFVQ.json
-|   |           01M5Z9TJ2MZ9SF27EFHFFSKF2D.json
-|   |           01M5Z9TK26R9A275W34782X7QP.json
-|   |           01M5Z9V4W3K5Y0P913WGQ3YYHT.json
-|   |           01M5Z9VJ2HPCDA9B1KGEEWTRG3.json
-|   |           01M5Z9X7RGSZYA6DQPZKYKP45S.json
-|   |           01M5Z9YP3H95KKY5MPYWRY1V9H.json
-|   |           01M5ZA244QSG8XJNY4666678NZ.json
-|   |           01M5ZA3H8Y3T9Y2R816HZ674YS.json
-|   |           01M5ZA3MG8TC1ZN9QZM787VZ2G.json
-|   |           01M5ZA49N0NARZ8TY85H6N4ZCT.json
-|   |           01M5ZA4CPNVGGJAJE4HFYJXSWJ.json
-|   |           01M5ZA4FMYA23NNAF58P9DDYY6.json
-|   |           01M5ZA4KKEJAAQ5RT5587DK86A.json
-|   |           01M5ZA519VDWXSNRS3JZ1W8EJ6.json
-|   |           01M5ZA530RDJQM665TM0RHW6CB.json
-|   |           01M5ZA53SWKYCYRP9TB9V4XDXK.json
-|   |           01M5ZA54EZMQQ3PWD67AY6ZZ3Y.json
-|   |           01M5ZA565GZ6ZTBX2F7RVPAE53.json
-|   |           01M5ZA5NWZREHPMRH38NFCJCDR.json
-|   |           01M5ZA5TR7D38PQYTXBCFGNHBE.json
-|   |           01M5ZA8EPRHRB7JT5SQWWNDKZJ.json
-|   |           01M5ZA8EZCP8X7XC9WP1C8R4V4.json
+|   |           01M5ZG7KKQ29SJ5HDW0JW5QD8V.json
+|   |           01M5ZG7M1V4AJ9B5MVHZYW95P3.json
+|   |           01M5ZGB8322EH47MH65DQHPG0E.json
+|   |           01M5ZGB88FHW2RCM1041X3FTXJ.json
+|   |           01M5ZQV2AW0Y71GW7G43W8M69N.json
+|   |           01M5ZQV2E3EWKTWTGN5P2EVD68.json
+|   |           01M5ZQVDF8KGN3WSTEM59G5M4V.json
+|   |           01M5ZQVDS07S413YMYY0ZYRG3R.json
+|   |           01M5ZQVPENQ8Q0VXHC99C3FRHQ.json
+|   |           01M5ZQVPK0SF8ZSA93982WYREB.json
+|   |           01M5ZR1AMBXDMV59HS3BKSTA5S.json
+|   |           01M5ZR1B7FWCQ27C3MEZEND56J.json
+|   |           01M5ZR2M8WKHVE6Y9PCG2CP4FT.json
+|   |           01M5ZR2N7C79DPXCYFD7T2ERS6.json
+|   |           01M5ZR32CVXH079Y6DJAEVJP2V.json
+|   |           01M5ZR33VCYN4D4W93FTY018K7.json
+|   |           01M5ZR47NZ8EC4T5DAWVF4DRZB.json
+|   |           01M5ZR482PGM8Q21S1JPQETGP6.json
+|   |           01M5ZR4J3FCPEF7Q3RBKBKH7MX.json
+|   |           01M5ZR4JQ5XP888XBMYG96ZK4J.json
+|   |           01M5ZR60HTSY9XFV39EAQMXNQD.json
+|   |           01M5ZR610PHY8BTD49PVX2Q8DB.json
+|   |           01M5ZR8W0GKPNFS460HEYFD13B.json
+|   |           01M5ZR8WER73BQPR780YFYETGD.json
+|   |           01M5ZR9FKEMKZMFMCYXTCCT2JV.json
+|   |           01M5ZR9NGV11BMQ7MZB43TWAFR.json
+|   |           01M5ZR9ZP17N2CW6A5G4RK767J.json
+|   |           01M5ZRA13CEGCRJVCAHW07H20F.json
+|   |           01M5ZRA62QWF2RTQ7HE8WE4CFN.json
+|   |           01M5ZRA8VSGTE1TV9EWN7VY0S5.json
+|   |           01M5ZRACDFZ61VTXJBVQJ9XSKA.json
+|   |           01M5ZRAR89BTXGK6R4EVNKG1KE.json
+|   |           01M5ZRC7RB6SSYWB9ECS9VF0Y0.json
+|   |           01M5ZRCVB7M9N630RNJF8E68JC.json
+|   |           01M5ZRD7W0269X3RFXV8T6JVRV.json
+|   |           01M5ZRD9SXFDP0WAQ75B5PCGNY.json
+|   |           01M5ZRDAV8WSH3WK7CRT0QYZDR.json
+|   |           01M5ZRDDN92H3NDVAG639EW25Z.json
+|   |           01M5ZRDFYCMM52999225ACQ296.json
+|   |           01M5ZRDYFJTRR5621W2A6VDQ9A.json
+|   |           01M5ZRE08XK9Q2TH8HJ9P15BEH.json
+|   |           01M5ZRFVFHMGBXGG8PB2NMST2K.json
+|   |           01M5ZRFXT9AYEH7NADG8PJS1AW.json
+|   |           01M5ZRFYVFMF684M5DZYHHB370.json
+|   |           01M5ZRGVKD685BKCSK2AZBPE9W.json
+|   |           01M5ZRH019RVBPRJN8EEQNJX7K.json
+|   |           01M5ZRHSE0BMC74C8QPX15VY3K.json
+|   |           01M5ZRHVB9XBWTQ7QDHF1Z7T7D.json
+|   |           01M5ZRHXTWFZQ3QRJ1TS3A86KF.json
+|   |           01M5ZRJ7TGHMVD0F5FV7Y0XMH9.json
+|   |           01M5ZRJAG2TVHE7E8C9YAX6N8V.json
+|   |           01M5ZRJEXRZHDGBNQ6NNA01GBC.json
+|   |           01M5ZRJMTYMFR02PGR0RWMMN0D.json
+|   |           01M5ZRM09EBQS512XHHZQP3PDJ.json
+|   |           01M5ZRM9WNB9W7MFYC36GZY0A4.json
+|   |           01M5ZRMC06EGFF61EEJBT3DXCH.json
+|   |           01M5ZRMD11D5RH1NK72TCR14VK.json
+|   |           01M5ZRMFNGYCW0VV8M5JHPFYB0.json
+|   |           01M5ZRMK09K0Q149QBTCSCPJHT.json
+|   |           01M5ZRMM2WWXT8VYW1YJKFQ9K6.json
+|   |           01M5ZRMN514509E1YV3A93JH16.json
+|   |           01M621AEX2QYZ9YW4BQGYZFC50.json
+|   |           01M621ATTHEFKAWXFCXZ078VAD.json
+|   |           01M621BS92H1WPNB8ZQEKDT1HS.json
+|   |           01M621BYG66EG3Y7GH8SCA6E2E.json
+|   |           01M621C0ESQKES895PEASS2865.json
+|   |           01M621C4Z2HY3D36MG2WCTFCPY.json
+|   |           01M621C8KFJVQZQK7B2FCCYTDP.json
+|   |           01M621CD06SG76TQDKS3WZRF6M.json
+|   |           01M621CHYTPBT3ZXPBM5R6YANT.json
+|   |           01M621CNF2494ACJ2QY7EP2R5Z.json
+|   |           01M621CQZX626DER229NF6XGJ6.json
+|   |           01M621D0PWAAN8Y0ZAE905J89J.json
+|   |           01M621D27Y5JG2E8ZY4YH8B6YH.json
+|   |           01M621D3SA666T0EMVFA774383.json
+|   |           01M621DASXSV3D245PAEWJEVRA.json
+|   |           01M621DJAQ6EWCZYKW0XB8G8H9.json
+|   |           01M621DTDT4AC2BNJFGJ32SBTM.json
+|   |           01M621DWCXYSJAW8HCMPQ5BRQ7.json
+|   |           01M621E75T8FBA9K5TQVF1TS53.json
+|   |           01M621E7XD4Z1SQXSSQZVD4NGF.json
+|   |           01M621EADCZD3HV1J3DS88RVR4.json
+|   |           01M621F8AATGDAB74GGZ3SSR3K.json
+|   |           01M621FAMWN22HPATKCXZCJJ9Z.json
+|   |           01M621FRZQ66CMK8RR2S0DHSNB.json
+|   |           01M621XZRA3VPT4ANF3HQK6YSS.json
+|   |           01M621ZK42CFRQHN3V8BWM04C8.json
+|   |           01M621ZZB4BE36C0TT1K2P4RZK.json
+|   |           01M6220SY7DXH5KYPMZ738338Q.json
+|   |           01M6220YPJJYTCD18V2PZ52E88.json
+|   |           01M6222GV6CVAKVG54VPEDG4PH.json
+|   |           01M6222NY0G87YMFMPQG5P3GRF.json
+|   |           01M6222T5P28FMDGXCK95C8GX5.json
+|   |           01M6222Y51BF4E5W2DWQ8RARBM.json
+|   |           01M6224EZHD5XE01B5Z8CQWVDH.json
+|   |           01M6224M8BP2S20S2ZT791SZPS.json
+|   |           01M6224R6NCBBTF56W0A0KCP9G.json
+|   |           01M6225J7R82G74WJ50TCG352Y.json
+|   |           01M6226088XBH0B0DSDY5CCCDD.json
+|   |           01M62264TVR0Y7MER5E73KDTMG.json
+|   |           01M62266RSVN7QRYTRK8174JEX.json
+|   |           01M62267GYW98K4F26PCNXJDTT.json
+|   |           01M6226BB1RJRNRX4ZCWX7M8MJ.json
+|   |           01M6226CW6JD8DDDS6MX33YSX3.json
+|   |           01M6226EEC7A4N77JTPSRSP6SG.json
+|   |           01M6226FJB8M645EBCZPPX5W4K.json
+|   |           01M6226G796H79PNZA545SY3HC.json
+|   |           01M6226H40R13RY5NKX8QC82K7.json
+|   |           01M6227P5NKGVBCR527VM6X6MV.json
+|   |           01M6227RRAG85P9PT60J8S3G17.json
+|   |           01M6227ZXYZK31PJ6TC017TWB6.json
+|   |           01M622817DK5FSWBTKP9ADX0N9.json
+|   |           01M622858ESDNS52B3RSVQAW0Y.json
+|   |           01M62290CJ4RGV97PFYKDTF3V2.json
+|   |           01M622984H7SGJ7V7KRGR4GW6X.json
+|   |           01M6PF9RB291XCXSSSYJ27R9ZP.json
 |   |           
 |   +---framework
 |   |   |   
@@ -7852,6 +7688,7 @@ D:.
 |   |   |       
 |   |   \---views
 |   |       |   0383a7b2d74cdaafb26ef9c7334d22d2.php
+|   |       |   041ff9dfd971b9323350d1fd47d4ee27.php
 |   |       |   0654acc766cbd40d73488b379cd9b821.php
 |   |       |   06f2bd3b15326a104e285416d87004f7.php
 |   |       |   0a33f5c2e5db6aaec905690d8d476e39.php
@@ -7876,13 +7713,17 @@ D:.
 |   |       |   4943bc92ebba41e8b0e508149542e0ad.blade.php
 |   |       |   4a8e57865b3b4a6fd3fe638b24082e8d.php
 |   |       |   50076f8730eb5b38b88ff8c0650da257.php
+|   |       |   517b6a3f282fd029536f94697f45cf89.php
 |   |       |   524b1629a31dac66854f2bc8e4975e9d.php
 |   |       |   54309112f71dfcb78a9669f042c8b0c4.php
 |   |       |   5ccd98a442666cd6097e548392c70541.php
 |   |       |   601569ccf7b7cde454097b1b93a8cfe7.php
+|   |       |   61c64e50ab68791d960ce4b88001cda4.php
 |   |       |   62c1ca52c6f5a371fcbc99f1d31e8742.php
+|   |       |   64400ce69c8a136084b06458ee552107.php
 |   |       |   6512af2736803e0c26dc1e7eb8fff495.php
 |   |       |   66b127c23256eddf71923c4ae192dafa.php
+|   |       |   67a55b2cacba5816c1b88f44cd7b9745.php
 |   |       |   67b5c15c0c99e37d398dedc9832ff364.php
 |   |       |   68e8aae79499a9ffc32aa4127c17f8d1.php
 |   |       |   6b3f24d7f734c1508c753568e2407da6.php
@@ -7905,14 +7746,17 @@ D:.
 |   |       |   89ad61fbdb16b89f22bc9f72ce71927d.php
 |   |       |   8bf4e1a99134b760dc518de30e23bfdb.php
 |   |       |   8e340ee4808731ce06a9c9bf53ad4480.php
+|   |       |   9176aa92afb9757e34e6dbe608e8f4c0.php
 |   |       |   9268d98403ec4038e8f41a82d3276500.php
 |   |       |   9544420c07a2ae42e9152d5a81f14b44.php
 |   |       |   958f678630675e92f027b7406b02dde2.php
 |   |       |   98c8845205183a52c6f09ad3b868480e.php
 |   |       |   9c23b22242a4e32273ac8c2263400b51.php
+|   |       |   9de480048816fe45ea7de8a6005c0f01.php
 |   |       |   9ee10502f784255d77206095265d8ae8.php
 |   |       |   a004baee098e356ee07862ceaa8a95ce.php
 |   |       |   a00E846.tmp
+|   |       |   a168b0ebcff266df6b662fc4b6d06e88.blade.php
 |   |       |   a4bba7a69c6d884943b7b0e7c2514f4d.php
 |   |       |   a562f1b0bb04568003824dca950b04db.php
 |   |       |   a5a4f81d4433677a87784b4267e35685.php
@@ -7921,6 +7765,7 @@ D:.
 |   |       |   ab1c84a5d8671a6c6b594b5f52f3776c.php
 |   |       |   aef47ef075b3d6f18d0efd63750bf68a.php
 |   |       |   af224973d2e24685a9b97c40a25cbfd7.php
+|   |       |   b094043e006cae36d32947b5fb8012c2.php
 |   |       |   b90761918a614fa4840d24b731af3e3e.php
 |   |       |   bde051cfc71330fb59d1e6b1c52d860b.php
 |   |       |   bfd4e150a63173c8562f55cd31ef29f4.php
@@ -7939,6 +7784,8 @@ D:.
 |   |       |   ddc776b945b0c524c437cb900307e6e5.php
 |   |       |   e1ccd334e32cf30eecf9b9203be7f271.php
 |   |       |   e41dc46ca03b6ffc32f3f63f794db8d9.php
+|   |       |   e6e512e59ab21cc304b7d60b23e511a9.php
+|   |       |   eadb238b5bdd67cb72bf5540e2a2d65c.php
 |   |       |   ec2bb7081be6c97a94b624619bfdeb6f.php
 |   |       |   eea101a6a2948311393c2e7fd6dcd210.php
 |   |       |   eecfba661b9edf770577318b97525cf6.php
@@ -7947,23 +7794,30 @@ D:.
 |   |       |   f26af76c4468a7c4418ae441e0b660f6.php
 |   |       |   f91fa257d32eea93d9139045cd598b15.php
 |   |       |   f9cf0b84b67a4c89826619360d73101e.php
+|   |       |   fac72008f7742c18a4be43ea721b59db.php
 |   |       |   fb9414806cc8f9f23edcd71c0297681c.php
 |   |       |   fba846826e7379332fb4fea682dae260.php
 |   |       |   ff7006565cb514414dd2f482942af661.php
 |   |       |   
 |   |       +---blaze
+|   |       |       025d960485511cb66452e55accd51d34.php
 |   |       |       041ff9dfd971b9323350d1fd47d4ee27.php
 |   |       |       044bded23e9ac725845ee36e6c9926bc.php
 |   |       |       062332c26c0b6c3e53f5df160dc697e5.php
 |   |       |       0b9d022cb11dd393c83f3fc7cb8863f2.php
+|   |       |       10c32e6c32fd7484f7177517737a992b.php
+|   |       |       155a28dd5688c092f1a54953be54ab3f.php
 |   |       |       1736132e08b69232a5254e2feee01db2.php
+|   |       |       17a07d9fa9b548ccdb6ed79cd2ed7e7d.php
 |   |       |       19bd3559ed5b91244ba7f13e1e1ad3cb.php
+|   |       |       201d549ce5bc0674246d2c34a6e05f0f.php
 |   |       |       246867bbc8026b06b7c0af84ee93f6f9.php
 |   |       |       2945f14e2ac45a25033ab8cb48a12ef8.php
 |   |       |       2a791403fdce381327fac241f6f8472d.php
 |   |       |       2ab0954fd961a8401afefe437ba2b492.php
 |   |       |       34f7944a08d6ff5f2df9ee38de9a4ed2.php
 |   |       |       3713f6a71366be2e73b0a7ca65a2dc92.php
+|   |       |       382680ebfea0c9a0fbd5f945d8e9d12d.php
 |   |       |       4bb759b82de4471d5ebcd8ee925d32e3.php
 |   |       |       4c6ebe1c3ba6cbb02c60efda1afd65b0.php
 |   |       |       59585f57bc3094acd556f1a328daf0e1.php
@@ -7994,6 +7848,7 @@ D:.
 |   |       |       aef47ef075b3d6f18d0efd63750bf68a.php
 |   |       |       b36713589df8cb26174ccb6ee8400753.php
 |   |       |       bde051cfc71330fb59d1e6b1c52d860b.php
+|   |       |       c2e8c15b5ecfe924e13380330d0451e3.php
 |   |       |       c8672b5a77995063220bcecceb492b1a.php
 |   |       |       c913f627240d72b3922ee6c604ed42cf.php
 |   |       |       ca57514666f948930c5cc1daf4a4e84f.php
@@ -8001,24 +7856,33 @@ D:.
 |   |       |       cae06528b9dfc69d32e7539d475cbef3.php
 |   |       |       d654a2ea13e5a3eb2d055d8cb99416c3.php
 |   |       |       d6b5e17a6642d22fb0b642dbe4bc5753.php
+|   |       |       d771d54d0f7e8ec249cceb9e703d88cf.php
 |   |       |       db694bc98ab2e4b0df4836edad10f37f.php
 |   |       |       ddc776b945b0c524c437cb900307e6e5.php
+|   |       |       e0855f9b8bad0af05e97e149a3147be9.php
 |   |       |       e6e512e59ab21cc304b7d60b23e511a9.php
 |   |       |       f2a1e50d2a7722d022049359fbf3c96c.php
 |   |       |       f31d574fa4b4180dfba5d290f109e04b.php
 |   |       |       f4d4c8684f897eec35ed22e6ab6322b7.php
 |   |       |       f5a7c950331b708d8ff52c4c555d603a.php
 |   |       |       fc225afc9af55884762ef6a7ff344d12.php
+|   |       |       fd1ea3a1b18a8adfc3d692496336ab70.php
 |   |       |       
 |   |       \---livewire
 |   |           |   
 |   |           +---classes
 |   |           |       2944fec4.php
+|   |           |       2ef16eb5.php
 |   |           |       3f05c43d.php
+|   |           |       5ef84e3b.php
+|   |           |       6c682a16.php
 |   |           |       81cb940e.php
+|   |           |       9b72c4bb.php
 |   |           |       9e61e0d3.php
+|   |           |       b7744be9.php
 |   |           |       c77e4e85.php
 |   |           |       e6111ddf.php
+|   |           |       f573f387.php
 |   |           |       
 |   |           +---scripts
 |   |           |       2944fec4.js
@@ -8027,11 +7891,17 @@ D:.
 |   |           |       
 |   |           \---views
 |   |                   2944fec4.blade.php
+|   |                   2ef16eb5.blade.php
 |   |                   3f05c43d.blade.php
+|   |                   5ef84e3b.blade.php
+|   |                   6c682a16.blade.php
 |   |                   81cb940e.blade.php
+|   |                   9b72c4bb.blade.php
 |   |                   9e61e0d3.blade.php
+|   |                   b7744be9.blade.php
 |   |                   c77e4e85.blade.php
 |   |                   e6111ddf.blade.php
+|   |                   f573f387.blade.php
 |   |                   
 |   \---logs
 |           browser.log
@@ -9887,8 +9757,7 @@ D:.
     |       |   |   |   AuthManagerExtension.php
     |       |   |   |   CollectionFilterRejectDynamicReturnTypeExtension.php
     |       |   |   |   CollectionWhereNotNullDynamicReturnTypeExtension.php
-    |       |   |   |   
-ConfigFacadeCollectionDynamicStaticMethodReturnTypeExtension.php
+    |       |   |   |   ConfigFacadeCollectionDynamicStaticMethodReturnTypeExtension.php
     |       |   |   |   ConfigRepositoryDynamicMethodReturnTypeExtension.php
     |       |   |   |   ContainerArrayAccessDynamicMethodReturnTypeExtension.php
     |       |   |   |   ContainerMakeDynamicReturnTypeExtension.php
@@ -9935,8 +9804,7 @@ ConfigFacadeCollectionDynamicStaticMethodReturnTypeExtension.php
     |       |   |           ValueExtension.php
     |       |   |           
     |       |   +---Rules
-    |       |   |   |   
-CheckDispatchArgumentTypesCompatibleWithClassConstructorRule.php
+    |       |   |   |   CheckDispatchArgumentTypesCompatibleWithClassConstructorRule.php
     |       |   |   |   ConfigCollectionRule.php
     |       |   |   |   DeferrableServiceProviderMissingProvidesRule.php
     |       |   |   |   ModelAppendsRule.php
@@ -16468,8 +16336,7 @@ CheckDispatchArgumentTypesCompatibleWithClassConstructorRule.php
     |               |               Pass.php
     |               |               RemoveBuiltinMethodsThatAreFinalPass.php
     |               |               RemoveDestructorPass.php
-    |               |               
-RemoveUnserializeForInternalSerializableClassesPass.php
+    |               |               RemoveUnserializeForInternalSerializableClassesPass.php
     |               |               TraitPass.php
     |               |               
     |               +---Loader
@@ -20232,8 +20099,7 @@ RemoveUnserializeForInternalSerializableClassesPass.php
     |           |   |   |   \---TestDouble
     |           |   |   |           MockObjectCreated.php
     |           |   |   |           MockObjectCreatedSubscriber.php
-    |           |   |   |           
-MockObjectForIntersectionOfInterfacesCreated.php
+    |           |   |   |           MockObjectForIntersectionOfInterfacesCreated.php
     |           |   |   |           
 MockObjectForIntersectionOfInterfacesCreatedSubscriber.php
     |           |   |   |           PartialMockObjectCreated.php
@@ -20241,8 +20107,7 @@ MockObjectForIntersectionOfInterfacesCreatedSubscriber.php
     |           |   |   |           TestStubCreated.php
     |           |   |   |           TestStubCreatedSubscriber.php
     |           |   |   |           TestStubForIntersectionOfInterfacesCreated.php
-    |           |   |   |           
-TestStubForIntersectionOfInterfacesCreatedSubscriber.php
+    |           |   |   |           TestStubForIntersectionOfInterfacesCreatedSubscriber.php
     |           |   |   |           
     |           |   |   +---TestRunner
     |           |   |   |   |   BootstrapFinished.php
@@ -20612,14 +20477,11 @@ TestStubForIntersectionOfInterfacesCreatedSubscriber.php
     |           |   |   |       
     |           |   |   +---ObjectEquals
     |           |   |   |       ActualValueIsNotAnObjectException.php
-    |           |   |   |       
-ComparisonMethodDoesNotAcceptParameterTypeException.php
-    |           |   |   |       
-ComparisonMethodDoesNotDeclareBoolReturnTypeException.php
+    |           |   |   |       ComparisonMethodDoesNotAcceptParameterTypeException.php
+    |           |   |   |       ComparisonMethodDoesNotDeclareBoolReturnTypeException.php
     |           |   |   |       
 ComparisonMethodDoesNotDeclareExactlyOneParameterException.php
-    |           |   |   |       
-ComparisonMethodDoesNotDeclareParameterTypeException.php
+    |           |   |   |       ComparisonMethodDoesNotDeclareParameterTypeException.php
     |           |   |   |       ComparisonMethodDoesNotExistException.php
     |           |   |   |       
     |           |   |   \---Skipped
@@ -21068,8 +20930,7 @@ MethodParametersAlreadyConfiguredForAnotherMatcherException.php
     |           |   |           Subscriber.php
     |           |   |           TestPreparedSubscriber.php
     |           |   |           TestTriggeredDeprecationSubscriber.php
-    |           |   |           
-TestTriggeredDeprecationWhileEventsAreCollectedSubscriber.php
+    |           |   |           TestTriggeredDeprecationWhileEventsAreCollectedSubscriber.php
     |           |   |           
     |           |   +---Exception
     |           |   |       ClassCannotBeFoundException.php
@@ -21202,8 +21063,7 @@ TestTriggeredDeprecationWhileEventsAreCollectedSubscriber.php
     |           |   |           TestRunnerTriggeredIssueDeprecationSubscriber.php
     |           |   |           TestRunnerTriggeredIssueErrorSubscriber.php
     |           |   |           TestRunnerTriggeredIssueNoticeSubscriber.php
-    |           |   |           
-TestRunnerTriggeredIssuePhpDeprecationSubscriber.php
+    |           |   |           TestRunnerTriggeredIssuePhpDeprecationSubscriber.php
     |           |   |           TestRunnerTriggeredIssuePhpNoticeSubscriber.php
     |           |   |           TestRunnerTriggeredIssuePhpWarningSubscriber.php
     |           |   |           TestRunnerTriggeredIssueWarningSubscriber.php
@@ -21324,8 +21184,7 @@ TestRunnerTriggeredIssuePhpDeprecationSubscriber.php
     |           |   |   |       NoHtmlCoverageTargetException.php
     |           |   |   |       NoPharExtensionDirectoryException.php
     |           |   |   |       NoTestFilesFileException.php
-    |           |   |   |       
-SpecificDeprecationToStopOnNotConfiguredException.php
+    |           |   |   |       SpecificDeprecationToStopOnNotConfiguredException.php
     |           |   |   |       TimeoutNotConfiguredException.php
     |           |   |   |       
     |           |   |   +---Value
@@ -21422,24 +21281,20 @@ SpecificDeprecationToStopOnNotConfiguredException.php
     |           |   |       |           IntroduceCoverageElement.php
     |           |   |       |           LogToReportMigration.php
     |           |   |       |           Migration.php
-    |           |   |       |           
-MoveAttributesFromFilterWhitelistToCoverage.php
+    |           |   |       |           MoveAttributesFromFilterWhitelistToCoverage.php
     |           |   |       |           MoveAttributesFromRootToCoverage.php
     |           |   |       |           MoveCoverageDirectoriesToSource.php
     |           |   |       |           MoveDefectsAfterOrderInExecutionOrder.php
-    |           |   |       |           
-MoveDependencyResolutionOutOfExecutionOrder.php
+    |           |   |       |           MoveDependencyResolutionOutOfExecutionOrder.php
     |           |   |       |           MoveWhitelistExcludesToCoverage.php
     |           |   |       |           MoveWhitelistIncludesToCoverage.php
     |           |   |       |           
 RemoveBeStrictAboutResourceUsageDuringSmallTestsAttribute.php
-    |           |   |       |           
-RemoveBeStrictAboutTodoAnnotatedTestsAttribute.php
+    |           |   |       |           RemoveBeStrictAboutTodoAnnotatedTestsAttribute.php
     |           |   |       |           RemoveCacheResultFileAttribute.php
     |           |   |       |           RemoveCacheTokensAttribute.php
     |           |   |       |           RemoveConversionToExceptionsAttributes.php
-    |           |   |       |           
-RemoveCoverageElementCacheDirectoryAttribute.php
+    |           |   |       |           RemoveCoverageElementCacheDirectoryAttribute.php
     |           |   |       |           
 RemoveCoverageElementProcessUncoveredFilesAttribute.php
     |           |   |       |           RemoveEmptyFilter.php
@@ -21454,14 +21309,11 @@ RemoveRegisterMockObjectsFromTestArgumentsRecursivelyAttribute.php
     |           |   |       |           RemoveTestSuiteLoaderAttributes.php
     |           |   |       |           RemoveVerboseAttribute.php
     |           |   |       |           RenameBackupStaticAttributesAttribute.php
-    |           |   |       |           
-RenameBeStrictAboutCoversAnnotationAttribute.php
+    |           |   |       |           RenameBeStrictAboutCoversAnnotationAttribute.php
     |           |   |       |           RenameCacheResultAttribute.php
-    |           |   |       |           
-RenameExecutionOrderOptionsDurationAndSize.php
+    |           |   |       |           RenameExecutionOrderOptionsDurationAndSize.php
     |           |   |       |           RenameForceCoversAnnotationAttribute.php
-    |           |   |       |           
-ReplaceRestrictDeprecationsWithIgnoreDeprecations.php
+    |           |   |       |           ReplaceRestrictDeprecationsWithIgnoreDeprecations.php
     |           |   |       |           UpdateSchemaLocation.php
     |           |   |       |           
     |           |   |       +---SchemaDetector
@@ -21532,8 +21384,7 @@ ReplaceRestrictDeprecationsWithIgnoreDeprecations.php
     |           |       |               TestTriggeredNoticeSubscriber.php
     |           |       |               TestTriggeredPhpDeprecationSubscriber.php
     |           |       |               TestTriggeredPhpNoticeSubscriber.php
-    |           |       |               
-TestTriggeredPhpunitDeprecationSubscriber.php
+    |           |       |               TestTriggeredPhpunitDeprecationSubscriber.php
     |           |       |               TestTriggeredPhpunitNoticeSubscriber.php
     |           |       |               TestTriggeredPhpunitWarningSubscriber.php
     |           |       |               TestTriggeredPhpWarningSubscriber.php
@@ -26152,8 +26003,7 @@ TestTriggeredPhpunitDeprecationSubscriber.php
     |           |       AuthenticatorAssertionResponseValidationFailedEvent.php
     |           |       AuthenticatorAssertionResponseValidationSucceededEvent.php
     |           |       AuthenticatorAttestationResponseValidationFailedEvent.php
-    |           |       
-AuthenticatorAttestationResponseValidationSucceededEvent.php
+    |           |       AuthenticatorAttestationResponseValidationSucceededEvent.php
     |           |       BackupEligibilityChangedEvent.php
     |           |       BackupStatusChangedEvent.php
     |           |       BeforeCertificateChainValidation.php

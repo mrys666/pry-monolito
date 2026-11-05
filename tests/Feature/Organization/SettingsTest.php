@@ -5,20 +5,27 @@ use App\Domain\Organization\Models\Organization;
 use App\Models\User;
 use Livewire\Livewire;
 
-it('impide que un operador actualice los ajustes de la organizacion', function () {
+it('impide que un operador acceda a los ajustes de la organizacion', function () {
     $org = Organization::factory()->create(['name' => 'Original Name']);
     $operator = User::factory()->create(['organization_id' => $org->id, 'role' => UserRole::Operator]);
 
-    $response = Livewire::actingAs($operator)
+    Livewire::actingAs($operator)
         ->test('pages::organization.settings')
-        ->set('name', 'Nuevo Nombre')
-        ->call('save');
+        ->assertForbidden();
 
-    $response->assertForbidden();
     $this->assertDatabaseHas('organizations', [
         'id' => $org->id,
         'name' => 'Original Name',
     ]);
+});
+
+it('impide que un visor acceda a los ajustes de la organizacion', function () {
+    $org = Organization::factory()->create();
+    $viewer = User::factory()->create(['organization_id' => $org->id, 'role' => UserRole::Viewer]);
+
+    Livewire::actingAs($viewer)
+        ->test('pages::organization.settings')
+        ->assertForbidden();
 });
 
 it('valida que el nombre de la organizacion sea obligatorio', function () {

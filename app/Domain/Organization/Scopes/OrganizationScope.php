@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Scope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Context;
 
+/**
+ * @implements Scope<Model>
+ */
 class OrganizationScope implements Scope
 {
     public function apply(Builder $builder, Model $model): void

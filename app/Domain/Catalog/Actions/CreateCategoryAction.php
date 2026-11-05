@@ -6,6 +6,9 @@ use App\Domain\Catalog\Models\Category;
 
 class CreateCategoryAction
 {
+    /**
+     * @param  array{name: string, description?: string|null, is_active?: bool}  $data
+     */
     public function handle(array $data): Category
     {
         // Encapsulamos la creación. Si más adelante necesitamos emitir

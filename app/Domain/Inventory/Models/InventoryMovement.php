@@ -2,10 +2,10 @@
 
 namespace App\Domain\Inventory\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
 use App\Domain\Catalog\Models\Product;
 use App\Domain\Organization\Concerns\BelongsToOrganization;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class InventoryMovement extends Model
@@ -20,14 +20,20 @@ class InventoryMovement extends Model
         'quantity',
         'stock_before',
         'stock_after',
-        'reason'
+        'reason',
     ];
 
+    /**
+     * @return BelongsTo<Product, $this>
+     */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

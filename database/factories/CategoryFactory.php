@@ -2,8 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Domain\Catalog\Models\Category as ModelsCategory;
-use App\Models\Domain\Catalog\Models\Category;
+use App\Domain\Catalog\Models\Category;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -11,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class CategoryFactory extends Factory
 {
-    protected $model = ModelsCategory::class;
+    protected $model = Category::class;
 
     /**
      * Define the model's default state.
@@ -30,7 +29,7 @@ class CategoryFactory extends Factory
 
     public function inactive(): static
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn (array $attributes) => [
             'is_active' => false,
         ]);
     }

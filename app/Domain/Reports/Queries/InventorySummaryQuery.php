@@ -4,6 +4,7 @@ namespace App\Domain\Reports\Queries;
 
 use App\Domain\Catalog\Models\Product;
 use App\Domain\Inventory\Models\InventoryMovement;
+use App\Models\User;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -25,9 +26,23 @@ class InventorySummaryQuery
         Cache::increment($versionKey);
     }
 
+    /**
+     * @return array{
+     *     total_products: int,
+     *     total_units: int,
+     *     total_valuation: float,
+     *     low_stock_count: int,
+     *     units_in: int,
+     *     units_out: int,
+     *     adjustments_count: int
+     * }
+     */
     public function handle(CarbonInterface $from, CarbonInterface $to): array
     {
-        $tenantId = auth()->user()?->organization_id ?? Context::get('organization_id') ?? 'global';
+        $user = Auth::user();
+        $tenantId = ($user instanceof User ? $user->organization_id : null)
+            ?? Context::get('organization_id')
+            ?? 'global';
         $version = Cache::get("reports.version.org_{$tenantId}", 1);
 
         $cacheKey = sprintf(

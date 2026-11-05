@@ -7,6 +7,9 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class LowStockProductsQuery
 {
+    /**
+     * @return LengthAwarePaginator<int, Product>
+     */
     public function paginate(int $perPage = 10): LengthAwarePaginator
     {
         return Product::query()

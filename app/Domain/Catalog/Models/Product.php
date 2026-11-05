@@ -22,7 +22,7 @@ class Product extends Model
         'price',
         'stock',
         'minimum_stock',
-        'is_active'
+        'is_active',
     ];
 
     protected function casts(): array
@@ -35,11 +35,17 @@ class Product extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<Category, $this>
+     */
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
+    /**
+     * @return HasMany<InventoryMovement, $this>
+     */
     public function movements(): HasMany
     {
         return $this->hasMany(InventoryMovement::class);
@@ -47,6 +53,9 @@ class Product extends Model
 
     /**
      * Regla de negocio: Producto activo en el catálogo.
+     *
+     * @param  Builder<Product>  $query
+     * @return Builder<Product>
      */
     #[Scope]
     protected function active(Builder $query): Builder
@@ -56,6 +65,9 @@ class Product extends Model
 
     /**
      * Regla de negocio: Producto en o por debajo del stock mínimo.
+     *
+     * @param  Builder<Product>  $query
+     * @return Builder<Product>
      */
     #[Scope]
     protected function lowStock(Builder $query): Builder
@@ -65,6 +77,8 @@ class Product extends Model
 
     /**
      * Subconsulta correlacionada: Obtiene la fecha del último movimiento sin hidratar la relación.
+     *
+     * @param  Builder<Product>  $query
      */
     #[Scope]
     protected function withLastMovementAt(Builder $query): void

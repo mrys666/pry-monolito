@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Domain\Access\Enums\UserRole;
+use App\Domain\Organization\Models\Organization;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -25,10 +27,11 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'organization_id' => \App\Domain\Organization\Models\Organization::factory(),
+            'organization_id' => Organization::factory(),
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
+            'role' => UserRole::Operator,
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
         ];
@@ -39,13 +42,19 @@ class UserFactory extends Factory
      */
     public function unverified(): static
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
     }
 
     /**
      * Indicate that the model has two-factor authentication configured.
+     *
+     * La autenticación de dos factores aún no está habilitada en la aplicación,
+     * por lo que este estado no altera los atributos del usuario.
      */
-    public function withTwoFactor(): static {}
+    public function withTwoFactor(): static
+    {
+        return $this;
+    }
 }

@@ -6,6 +6,9 @@ use App\Domain\Organization\Models\Organization;
 
 class UpdateOrganizationAction
 {
+    /**
+     * @param  array{name: string, tax_id?: string|null, email?: string|null, phone?: string|null, address?: string|null}  $data
+     */
     public function handle(Organization $organization, array $data): Organization
     {
         $organization->update([

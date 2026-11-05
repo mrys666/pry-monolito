@@ -2,11 +2,15 @@
 
 namespace App\Models;
 
+use App\Domain\Access\Enums\UserRole;
+use App\Domain\Inventory\Models\InventoryMovement;
+use App\Domain\Organization\Models\Organization;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
-use App\Domain\Access\Enums\UserRole;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -16,7 +20,7 @@ use Illuminate\Support\Str;
  * @property int $id
  * @property string $name
  * @property string $email
- *  @property UserRole $role
+ * @property UserRole $role
  * @property Carbon|null $email_verified_at
  * @property string $password
  * @property string|null $two_factor_secret
@@ -55,12 +59,23 @@ class User extends Authenticatable
         $initials = Str::initials($this->name, true);
 
         return Str::length($initials) > 1
-            ? Str::substr($initials, 0, 1) . Str::substr($initials, -1)
+            ? Str::substr($initials, 0, 1).Str::substr($initials, -1)
             : $initials;
     }
 
-    public function organization(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    /**
+     * @return BelongsTo<Organization, $this>
+     */
+    public function organization(): BelongsTo
     {
-        return $this->belongsTo(\App\Domain\Organization\Models\Organization::class);
+        return $this->belongsTo(Organization::class);
+    }
+
+    /**
+     * @return HasMany<InventoryMovement, $this>
+     */
+    public function movements(): HasMany
+    {
+        return $this->hasMany(InventoryMovement::class);
     }
 }

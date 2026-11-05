@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Context;
 
 /**
- * @mixin \Illuminate\Database\Eloquent\Model
+ * @mixin Model
+ *
  * @method static void addGlobalScope($scope, $implementation = null)
  * @method static void creating(callable|string $callback)
  */
@@ -18,18 +19,23 @@ trait BelongsToOrganization
 {
     public static function bootBelongsToOrganization(): void
     {
-        static::addGlobalScope(new OrganizationScope());
+        static::addGlobalScope(new OrganizationScope);
 
         static::creating(function (Model $model) {
-            if (! $model->organization_id) {
-                $model->organization_id = Context::get('organization_id') ?? Auth::user()?->organization_id;
+            if (! $model->getAttribute('organization_id')) {
+                $model->setAttribute(
+                    'organization_id',
+                    Context::get('organization_id') ?? Auth::user()?->organization_id,
+                );
             }
         });
     }
 
+    /**
+     * @return BelongsTo<Organization, $this>
+     */
     public function organization(): BelongsTo
     {
-        /** @var \Illuminate\Database\Eloquent\Model $this */
         return $this->belongsTo(Organization::class);
     }
 }

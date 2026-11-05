@@ -2,6 +2,7 @@
 
 namespace App\Domain\Inventory\Listeners;
 
+use App\Domain\Catalog\Models\Product;
 use App\Domain\Inventory\Events\InventoryMovementRegistered;
 use App\Domain\Inventory\Jobs\SendLowStockAlertJob;
 
@@ -17,7 +18,7 @@ class CheckLowStockListener
         $product = $event->movement->product;
 
         // Regla de dominio: ¿El stock resultante cayó en o por debajo del mínimo?
-        if ($product->stock <= $product->minimum_stock) {
+        if ($product instanceof Product && $product->stock <= $product->minimum_stock) {
             SendLowStockAlertJob::dispatch($product);
         }
     }

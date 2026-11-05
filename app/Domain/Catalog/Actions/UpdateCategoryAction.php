@@ -6,6 +6,9 @@ use App\Domain\Catalog\Models\Category;
 
 class UpdateCategoryAction
 {
+    /**
+     * @param  array{name: string, description?: string|null, is_active?: bool}  $data
+     */
     public function handle(Category $category, array $data): Category
     {
         $category->update([

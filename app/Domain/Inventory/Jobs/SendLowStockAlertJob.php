@@ -12,13 +12,16 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-class SendLowStockAlertJob implements ShouldQueue, ShouldBeUnique
+class SendLowStockAlertJob implements ShouldBeUnique, ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     // Configuración de reintentos y espera progresiva (Backoff)
     public int $tries = 3;
+
+    /** @var array<int, int> */
     public array $backoff = [5, 15, 30];
+
     public int $timeout = 60;
 
     // Evita encolar otra alerta para el mismo producto durante 1 hora (3600 seg)
@@ -30,7 +33,7 @@ class SendLowStockAlertJob implements ShouldQueue, ShouldBeUnique
 
     public function uniqueId(): string
     {
-        return 'low-stock-alert-' . $this->product->id;
+        return 'low-stock-alert-'.$this->product->id;
     }
 
     public function handle(): void
