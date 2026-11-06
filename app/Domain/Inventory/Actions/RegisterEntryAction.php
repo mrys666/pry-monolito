@@ -25,8 +25,6 @@ class RegisterEntryAction
 
             $product->update(['stock' => $stockAfter]);
 
-
-
             $movement = InventoryMovement::create([
                 'product_id' => $product->id,
                 'user_id' => $userId,

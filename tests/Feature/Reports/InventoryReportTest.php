@@ -31,11 +31,11 @@ it('calcula correctamente los indicadores del inventario y detecta stock bajo si
     ]);
 
     // +5 a Mouse (queda en 15) y -2 a Teclado (queda en 3, crítico)
-    (new RegisterEntryAction())->handle($productOk->id, $user->id, 5, 'Compra');
-    (new RegisterDispensationAction())->handle($productLow->id, $user->id, 2, 'Venta');
+    (new RegisterEntryAction)->handle($productOk->id, $user->id, 5, 'Compra');
+    (new RegisterDispensationAction)->handle($productLow->id, $user->id, 2, 'Venta');
 
-    $summary = (new InventorySummaryQuery())->handle(now()->subDay(), now());
-    $lowStockList = (new LowStockProductsQuery())->paginate();
+    $summary = (new InventorySummaryQuery)->handle(now()->subDay(), now());
+    $lowStockList = (new LowStockProductsQuery)->paginate();
 
     expect($summary['total_products'])->toBe(2)
         ->and($summary['total_units'])->toBe(18) // 15 + 3

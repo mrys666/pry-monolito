@@ -28,7 +28,7 @@ it('transmite el movimiento por el canal privado exclusivo de la organizacion', 
 
     Event::fake([InventoryMovementRegistered::class]);
 
-    (new RegisterEntryAction())->handle($product->id, $user->id, 5, 'Reposición inmediata');
+    (new RegisterEntryAction)->handle($product->id, $user->id, 5, 'Reposición inmediata');
 
     Event::assertDispatched(InventoryMovementRegistered::class, function (InventoryMovementRegistered $event) use ($org, $product) {
         $channels = $event->broadcastOn();
@@ -56,10 +56,10 @@ it('invalida la cache del reporte inmediatamente cuando se registra un movimient
         'minimum_stock' => 2,
     ]);
 
-    $query = new InventorySummaryQuery();
+    $query = new InventorySummaryQuery;
     $initialSummary = $query->handle(now()->subDay(), now());
 
-    (new RegisterEntryAction())->handle($product->id, $user->id, 6, 'Nueva compra');
+    (new RegisterEntryAction)->handle($product->id, $user->id, 6, 'Nueva compra');
 
     $updatedSummary = $query->handle(now()->subDay(), now());
 

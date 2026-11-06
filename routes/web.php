@@ -29,4 +29,4 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::livewire('/organizacion/ajustes', 'pages::organization.settings')->name('organization.settings');
 });
 
-require __DIR__ . '/settings.php';
+require __DIR__.'/settings.php';

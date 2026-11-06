@@ -22,7 +22,7 @@ it('encola una alerta cuando el stock llega al nivel minimo tras una salida', fu
     ]);
 
     // Retiramos 6 unidades: el stock queda en 4 (menor al mínimo de 5)
-    (new RegisterDispensationAction())->handle($product->id, $user->id, 6, 'Venta mayorista');
+    (new RegisterDispensationAction)->handle($product->id, $user->id, 6, 'Venta mayorista');
 
     Queue::assertPushed(SendLowStockAlertJob::class, function ($job) use ($product) {
         return $job->product->id === $product->id;
@@ -44,7 +44,7 @@ it('no encola alerta si el stock resultante sigue por encima del minimo', functi
     ]);
 
     // Retiramos 5 unidades: el stock queda en 15 (seguro)
-    (new RegisterDispensationAction())->handle($product->id, $user->id, 5, 'Venta normal');
+    (new RegisterDispensationAction)->handle($product->id, $user->id, 5, 'Venta normal');
 
     Queue::assertNotPushed(SendLowStockAlertJob::class);
 });

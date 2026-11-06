@@ -3,9 +3,9 @@
 namespace App\Domain\Inventory\Actions;
 
 use App\Domain\Catalog\Models\Product;
-use App\Domain\Inventory\Models\InventoryMovement;
 use App\Domain\Inventory\Events\InventoryMovementRegistered;
 use App\Domain\Inventory\Exceptions\InsufficientStockException;
+use App\Domain\Inventory\Models\InventoryMovement;
 use Illuminate\Support\Facades\DB;
 
 class RegisterDispensationAction

@@ -2,24 +2,22 @@
 
 namespace App\Providers;
 
-use Illuminate\Database\Eloquent\Model;
-use Carbon\CarbonImmutable;
-use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Validation\Rules\Password;
-
 use App\Domain\Access\Policies\CategoryPolicy;
 use App\Domain\Access\Policies\InventoryMovementPolicy;
 use App\Domain\Access\Policies\ProductPolicy;
 use App\Domain\Catalog\Models\Category;
 use App\Domain\Catalog\Models\Product;
 use App\Domain\Inventory\Models\InventoryMovement;
-use Illuminate\Support\Facades\Gate;
-use Livewire\Blaze\Blaze;
-
 use App\Domain\Organization\Models\Organization;
 use App\Domain\Organization\Policies\OrganizationPolicy;
+use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Validation\Rules\Password;
+use Livewire\Blaze\Blaze;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -58,13 +56,13 @@ class AppServiceProvider extends ServiceProvider
         );
 
         Password::defaults(
-            fn(): ?Password => app()->isProduction()
+            fn (): ?Password => app()->isProduction()
                 ? Password::min(12)
-                ->mixedCase()
-                ->letters()
-                ->numbers()
-                ->symbols()
-                ->uncompromised()
+                    ->mixedCase()
+                    ->letters()
+                    ->numbers()
+                    ->symbols()
+                    ->uncompromised()
                 : null,
         );
     }

@@ -34,7 +34,7 @@ it('impide que un usuario retire stock de un producto de otra organizacion devol
     $this->actingAs($userA);
 
     $this->expectException(ModelNotFoundException::class);
-    (new RegisterDispensationAction())->handle($productB->id, $userA->id, 5, 'Intento cruzado');
+    (new RegisterDispensationAction)->handle($productB->id, $userA->id, 5, 'Intento cruzado');
 
     $this->assertDatabaseHas('products', [
         'id' => $productB->id,
@@ -77,7 +77,7 @@ it('permite registrar el mismo SKU en dos organizaciones distintas y aisla los i
 
     $response->assertRedirect('/productos');
 
-    $summaryA = (new InventorySummaryQuery())->handle(now()->subDay(), now());
+    $summaryA = (new InventorySummaryQuery)->handle(now()->subDay(), now());
 
     expect($summaryA['total_products'])->toBe(1)
         ->and($summaryA['total_units'])->toBe(10)

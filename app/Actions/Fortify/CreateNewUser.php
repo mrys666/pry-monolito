@@ -40,7 +40,7 @@ class CreateNewUser implements CreatesNewUsers
 
             // Usamos la propiedad inyectada en el constructor
             $organization = $this->createOrganization->handle(
-                $input['name'] . "'s Organization"
+                $input['name']."'s Organization"
             );
 
             return User::create([
