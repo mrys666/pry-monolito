@@ -1,0 +1,116 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: monolito-app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - monolito-net
+    depends_on:
+      - db
+      - redis
+    command: >
+      sh -c "
+      git config --global --add safe.directory /var/www/html &&
+      chmod -R 777 storage bootstrap/cache &&
+      php-fpm
+      "
+
+  nginx:
+    image: nginx:alpine
+    container_name: monolito-nginx
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8001}:80"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - monolito-net
+
+  reverb:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: monolito-reverb
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    ports:
+      - "${REVERB_EXTERNAL_PORT:-8081}:8080"
+    depends_on:
+      - app
+      - redis
+    networks:
+      - monolito-net
+    command: >
+      sh -c "
+      php artisan config:clear &&
+      php artisan reverb:start --host=0.0.0.0 --port=8080
+      "
+
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: monolito-queue
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - app
+      - db
+      - redis
+    networks:
+      - monolito-net
+    command: php artisan queue:work --sleep=3 --tries=3 --max-time=3600
+
+  db:
+    image: mysql:8.0
+    container_name: monolito-db
+    restart: unless-stopped
+    ports:
+      - "${FORWARD_DB_PORT:-33061}:3306"
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-pry_monolito}
+      MYSQL_USER: ${DB_USERNAME:-monolito_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-MonolitoSecret2026!}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-MonolitoSecret2026!}
+    volumes:
+      - monolito_dbdata:/var/lib/mysql
+    networks:
+      - monolito-net
+
+  redis:
+    image: redis:alpine
+    container_name: monolito-redis
+    restart: unless-stopped
+    networks:
+      - monolito-net
+
+  node:
+    image: node:22-alpine
+    container_name: monolito-node
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+      - monolito_node_modules:/var/www/html/node_modules
+    command: sh -c "npm install && npm run build"
+    networks:
+      - monolito-net
+
+networks:
+  monolito-net:
+    driver: bridge
+
+volumes:
+  monolito_dbdata:
+  monolito_node_modules:
